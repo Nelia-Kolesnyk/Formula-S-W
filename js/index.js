@@ -151,19 +151,31 @@ function toggleAcc(header) {
 // ─── FEATURED CASES NAVIGATION ───
 function scrollFeaturedCases(direction) {
   const container = document.querySelector('.featured-cases');
-  const firstCard = container.querySelector('.featured-case-card');
-  const cardWidth = firstCard ? firstCard.offsetWidth : 600;
-  const gap = 30;
-  const scrollAmount = cardWidth + gap;
+  const cards = Array.from(container.querySelectorAll('.featured-case-card'));
+  if (!cards.length) return;
 
-  if (direction === 'prev') {
-    container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-  } else {
-    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  }
+  // Find the currently visible card index
+  const containerLeft = container.getBoundingClientRect().left;
+  let currentIndex = 0;
+  let minDist = Infinity;
+  cards.forEach((card, i) => {
+    const dist = Math.abs(card.getBoundingClientRect().left - containerLeft);
+    if (dist < minDist) { minDist = dist; currentIndex = i; }
+  });
 
-  updateFeaturedButtons();
-  updateFeaturedDots();
+  const step = (direction === 'prev' || direction === -1) ? -1 : 1;
+  const targetIndex = Math.max(0, Math.min(cards.length - 1, currentIndex + step));
+  const targetCard = cards[targetIndex];
+
+  // Scroll so the target card aligns to the container's left edge (accounting for padding)
+  const paddingLeft = parseInt(getComputedStyle(container).paddingLeft) || 0;
+  const cardOffsetLeft = targetCard.offsetLeft;
+  container.scrollTo({ left: cardOffsetLeft - paddingLeft, behavior: 'smooth' });
+
+  setTimeout(() => {
+    updateFeaturedButtons();
+    updateFeaturedDots();
+  }, 350);
 }
 
 function updateFeaturedButtons() {
@@ -191,17 +203,18 @@ function updateFeaturedButtons() {
 function updateFeaturedDots() {
   const container = document.querySelector('.featured-cases');
   const dots = document.querySelectorAll('.featured-dot');
-  const firstCard = container.querySelector('.featured-case-card');
-  const cardWidth = firstCard ? firstCard.offsetWidth : 600;
-  const gap = 30;
-  const currentIndex = Math.round(container.scrollLeft / (cardWidth + gap));
+  const cards = Array.from(container.querySelectorAll('.featured-case-card'));
+  
+  const containerLeft = container.getBoundingClientRect().left;
+  let currentIndex = 0;
+  let minDist = Infinity;
+  cards.forEach((card, i) => {
+    const dist = Math.abs(card.getBoundingClientRect().left - containerLeft);
+    if (dist < minDist) { minDist = dist; currentIndex = i; }
+  });
   
   dots.forEach((dot, index) => {
-    if (index === currentIndex) {
-      dot.classList.add('active');
-    } else {
-      dot.classList.remove('active');
-    }
+    dot.classList.toggle('active', index === currentIndex);
   });
 }
 
@@ -221,10 +234,10 @@ document.addEventListener('DOMContentLoaded', function() {
     dots.forEach((dot, index) => {
       dot.addEventListener('click', function() {
         const container = document.querySelector('.featured-cases');
-        const firstCard = container.querySelector('.featured-case-card');
-        const cardWidth = firstCard ? firstCard.offsetWidth : 600;
-        const gap = 30;
-        container.scrollTo({ left: (cardWidth + gap) * index, behavior: 'smooth' });
+        const cards = Array.from(container.querySelectorAll('.featured-case-card'));
+        if (!cards[index]) return;
+        const paddingLeft = parseInt(getComputedStyle(container).paddingLeft) || 0;
+        container.scrollTo({ left: cards[index].offsetLeft - paddingLeft, behavior: 'smooth' });
       });
     });
   }

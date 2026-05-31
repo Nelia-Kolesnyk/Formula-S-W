@@ -29,6 +29,25 @@ body {
   line-height: 1.6;
 }
 
+/* Minimalist scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(201, 151, 94, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 151, 94, 0.5);
+}
+
 /* ─── CURSOR REMOVED ─── */
 
 /* ─── NOISE OVERLAY ─── */
@@ -2647,9 +2666,10 @@ section { padding: 100px 40px; }
 
 @media (max-width: 768px) {
   .featured-cases {
-    margin: 20px -10px 20px;
-    padding: 0 0;
+    margin: 20px 0 20px;
+    padding: 0 20px;
     gap: 16px;
+    scroll-snap-type: x mandatory;
     -webkit-mask-image: none !important;
     mask-image: none !important;
   }
@@ -2662,6 +2682,7 @@ section { padding: 100px 40px; }
     max-height: none;
     grid-template-columns: 1fr;
     overflow-y: auto;
+    scroll-snap-align: center;
   }
 
   .featured-case-gallery {
@@ -2778,17 +2799,18 @@ section { padding: 100px 40px; }
   }
 
   .featured-cases {
-    margin: 16px -10px 16px;
-    padding: 0 0;
+    margin: 16px 0 16px;
+    padding: 0 16px;
     -webkit-mask-image: none !important;
     mask-image: none !important;
   }
 
   .featured-case-card {
-    flex: 0 0 calc(100vw - 40px);
-    min-width: calc(100vw - 40px);
-    max-width: calc(100vw - 40px);
+    flex: 0 0 calc(100vw - 32px);
+    min-width: calc(100vw - 32px);
+    max-width: calc(100vw - 32px);
     border-radius: 14px;
+    scroll-snap-align: center;
   }
 
   .featured-main-photo {
